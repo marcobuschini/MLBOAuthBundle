@@ -1,0 +1,31 @@
+{
+    "name" : "MLB/OAuthBundle",
+    "description" : "Integrating FOSUserBundle with OAuth",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Marco Buschini",
+        "email" : "marco.buschini@gmail.com"
+    }],
+    "keywords" : [
+        "fosub oauth"
+    ],
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+        "friendsofsymfony/user-bundle": "*"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "MLB\\OAuthBundle" : ""
+        }
+    },
+    "target-dir" : "MLB/OAuhtBundle",
+    "repositories" : [{
+    ],
+    "extra" : {
+    "branch-alias" : {
+            "dev-master" : "master"
+        }
+    }
+}
