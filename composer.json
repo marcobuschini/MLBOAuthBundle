@@ -21,7 +21,9 @@
         }
     },
     "target-dir" : "MLB/OAuhtBundle",
-    "repositories" : [{
+    "repositories" : [
+        "type" : "vcs",
+        "url" : "https://github.com/marcobuschini/MLBOAuthBundle.git"
     ],
     "extra" : {
     "branch-alias" : {
