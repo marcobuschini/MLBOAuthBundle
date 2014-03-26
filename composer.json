@@ -12,10 +12,10 @@
     "license" : [
         "MIT"
     ],
-    "repositories" : {[
+    "repositories" : {
         "type" : "vcs",
         "url" : "https://github.com/marcobuschini/MLBOAuthBundle.git"
-    ]},
+    },
     "require" : {
         "friendsofsymfony/user-bundle": "*"
     },
