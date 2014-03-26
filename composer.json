@@ -12,6 +12,10 @@
     "license" : [
         "MIT"
     ],
+    "repositories" : [
+        "type" : "vcs",
+        "url" : "https://github.com/marcobuschini/MLBOAuthBundle.git"
+    ],
     "require" : {
         "friendsofsymfony/user-bundle": "*"
     },
@@ -21,10 +25,6 @@
         }
     },
     "target-dir" : "MLB/OAuhtBundle",
-    "repositories" : [
-        "type" : "vcs",
-        "url" : "https://github.com/marcobuschini/MLBOAuthBundle.git"
-    ],
     "extra" : {
     "branch-alias" : {
             "dev-master" : "master"
