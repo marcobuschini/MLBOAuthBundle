@@ -19,10 +19,17 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('mlbo_auth');
-
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->arrayNode('google')
+                    ->children()
+                        ->scalarNode('client_id')->end()
+                        ->scalarNode('client_secret')->end()
+                        ->scalarNode('redirect_uri')->end()
+                        ->scalarNode('scope')->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }
