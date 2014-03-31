@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-use MLB\UserBundle\Entity\User;
+use MLB\AcmeDemoBundle\Entity\User;
 
 /**
   * Controller actions to interface with Google's OAuth for user registration, and login.
@@ -45,19 +45,20 @@ class GoogleController extends Controller
     {
         if($request->query->has('state') && $request->query->has('code'))
         {
-            $auth = $this->container->getParameter('auth');
+            $auth = $this->container->getParameter('mlbo_auth');
+            $auth = $auth['google'];
             if($request->query->get('state') == $request->getSession()->get("state"))
             {
                 $code = $request->query->get('code');
                 $client_id = $auth["client_id"];
                 $client_secret = $auth["client_secret"];
-                $request_uri = $auth["request_uri"];
+                $redirect_uri = $auth["redirect_uri"];
                 $grant_type="authorization_code";
 
                 $encoded = 'code='.$code
                           .'&client_id='.$client_id
                           .'&client_secret='.$client_secret
-                          .'&redirect_uri='.urlencode($request_uri)
+                          .'&redirect_uri='.urlencode($redirect_uri)
                           .'&grant_type='.$grant_type;
                 $ch = curl_init("https://accounts.google.com/o/oauth2/token");
                 curl_setopt($ch, CURLOPT_POSTFIELDS,  $encoded);
