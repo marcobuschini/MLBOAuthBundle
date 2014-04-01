@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-use MLB\AcmeDemoBundle\Entity\User;
+use Acme\DemoBundle\Entity\User;
 
 /**
   * Controller actions to interface with Google's OAuth for user registration, and login.
