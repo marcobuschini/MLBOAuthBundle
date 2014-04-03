@@ -108,9 +108,12 @@ class GoogleController extends Controller
                 // Logging the user in as above doesn't do this automatically
                 $event = new InteractiveLoginEvent($request, $token);
                 $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
+            } else {
+                return new Response('Invalid request', 401, array('content-type' => 'text/html'));
             }
         } else {		
             return new Response('Invalid request', 401, array('content-type' => 'text/html'));
         }
+        return $this->redirect($this->generateUrl('google_after_login'));
     }
 }
