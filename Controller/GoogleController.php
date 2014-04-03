@@ -11,8 +11,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-use Acme\DemoBundle\Entity\User;
-
 /**
   * Controller actions to interface with Google's OAuth for user registration, and login.
   */
@@ -90,7 +88,7 @@ class GoogleController extends Controller
                 $user = $userManager->findUserBy(array('google_id' => $google_id));
                 if($user == null)
                 {
-                    $user = new User();
+                    $user = $userManager->createUser();
                     $user->setPassword('');
                 }
 
