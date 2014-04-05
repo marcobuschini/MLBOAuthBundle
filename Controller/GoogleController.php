@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 /**
@@ -30,7 +30,7 @@ class GoogleController extends Controller
         $session->set('state', $state);
 
         $uri = "https://accounts.google.com/o/oauth2/auth?client_id=".$auth["client_id"].
-               "&response_type=code&scope=".urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email').'&'.
+               "&response_type=code&scope=".urlencode($auth["scope"]).'&'.
                "redirect_uri=".urlencode($auth["redirect_uri"])."&".
                "state=".$state;
         return $this->redirect($uri);
@@ -43,10 +43,11 @@ class GoogleController extends Controller
     {
         if($request->query->has('state') && $request->query->has('code'))
         {
-            $auth = $this->container->getParameter('mlbo_auth');
-            $auth = $auth['google'];
             if($request->query->get('state') == $request->getSession()->get("state"))
             {
+                $auth = $this->container->getParameter('mlbo_auth');
+                $provider_key = $auth['provider_key'];
+                $auth = $auth['google'];
                 $code = $request->query->get('code');
                 $client_id = $auth["client_id"];
                 $client_secret = $auth["client_secret"];
@@ -98,8 +99,8 @@ class GoogleController extends Controller
                 $user->setGoogleAccessToken($google_access_token);
                 $userManager->updateUser($user, true);
 
-                // Here, "main" is the name of the firewall in your security.yml
-                $token = new UsernamePasswordToken($user, $user->getPassword(), "main", $user->getRoles());
+                // Here, $provider_key is the name of the firewall in your security.yml
+                $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
                 $this->get("security.context")->setToken($token);
 
                 // Fire the login event
