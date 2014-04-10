@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('mlbo_auth');
         $rootNode
             ->children()
-                ->scalarNode('provider_key')->end()
+                ->scalarNode('firewall_name')->end()
                 ->arrayNode('google')
                     ->children()
                         ->scalarNode('client_id')->end()
