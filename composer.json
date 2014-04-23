@@ -10,7 +10,7 @@
         "fosub oauth"
     ],
     "license" : [
-        "MIT"
+        "LGPL"
     ],
     "repositories" : {
         "type" : "vcs",
