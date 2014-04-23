@@ -24,14 +24,14 @@ class GoogleController extends Controller
     {
         $auth = $this->container->getParameter('mlbo_auth');
 
-        $auth = $auth['google'];
+        $google = $auth['google'];
         $state = hash('sha512', rand(), false);
         $session = $this->getRequest()->getSession();
         $session->set('state', $state);
 
-        $uri = "https://accounts.google.com/o/oauth2/auth?client_id=".$auth["client_id"].
-               "&response_type=code&scope=".urlencode($auth["scope"]).'&'.
-               "redirect_uri=".urlencode($auth["redirect_uri"])."&".
+        $uri = "https://accounts.google.com/o/oauth2/auth?client_id=".$google["client_id"].
+               "&response_type=code&scope=".urlencode($google["scope"]).'&'.
+               "redirect_uri=".urlencode($google["redirect_uri"])."&".
                "state=".$state;
         return $this->redirect($uri);
     }
@@ -47,11 +47,11 @@ class GoogleController extends Controller
             {
                 $auth = $this->container->getParameter('mlbo_auth');
                 $provider_key = $auth['firewall_name'];
-                $auth = $auth['google'];
+                $google = $auth['google'];
                 $code = $request->query->get('code');
-                $client_id = $auth["client_id"];
-                $client_secret = $auth["client_secret"];
-                $redirect_uri = $auth["redirect_uri"];
+                $client_id = $google["client_id"];
+                $client_secret = $google["client_secret"];
+                $redirect_uri = $google["redirect_uri"];
                 $grant_type="authorization_code";
 
                 $encoded = 'code='.$code
