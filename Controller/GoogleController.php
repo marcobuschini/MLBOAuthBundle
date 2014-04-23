@@ -29,10 +29,10 @@ class GoogleController extends Controller
         $session = $this->getRequest()->getSession();
         $session->set('state', $state);
 
-        $uri = "https://accounts.google.com/o/oauth2/auth?client_id=".$google["client_id"].
-               "&response_type=code&scope=".urlencode($google["scope"]).'&'.
-               "redirect_uri=".urlencode($google["redirect_uri"])."&".
-               "state=".$state;
+        $uri = 'https://accounts.google.com/o/oauth2/auth?client_id='.$google['client_id'].
+               '&response_type=code&scope='.urlencode($google['scope']).'&'.
+               'redirect_uri='.urlencode($google['redirect_uri']).'&'.
+               'state='.$state;
         return $this->redirect($uri);
     }
 	
@@ -43,23 +43,23 @@ class GoogleController extends Controller
     {
         if($request->query->has('state') && $request->query->has('code'))
         {
-            if($request->query->get('state') == $request->getSession()->get("state"))
+            if($request->query->get('state') == $request->getSession()->get('state'))
             {
                 $auth = $this->container->getParameter('mlbo_auth');
                 $provider_key = $auth['firewall_name'];
                 $google = $auth['google'];
                 $code = $request->query->get('code');
-                $client_id = $google["client_id"];
-                $client_secret = $google["client_secret"];
-                $redirect_uri = $google["redirect_uri"];
-                $grant_type="authorization_code";
+                $client_id = $google['client_id'];
+                $client_secret = $google['client_secret'];
+                $redirect_uri = $google['redirect_uri'];
+                $grant_type='authorization_code';
 
                 $encoded = 'code='.$code
                           .'&client_id='.$client_id
                           .'&client_secret='.$client_secret
                           .'&redirect_uri='.urlencode($redirect_uri)
                           .'&grant_type='.$grant_type;
-                $ch = curl_init("https://accounts.google.com/o/oauth2/token");
+                $ch = curl_init('https://accounts.google.com/o/oauth2/token');
                 curl_setopt($ch, CURLOPT_POSTFIELDS,  $encoded);
                 curl_setopt($ch, CURLOPT_HEADER, false);
                 curl_setopt($ch, CURLOPT_POST, true);
@@ -73,8 +73,8 @@ class GoogleController extends Controller
                     return new Response('Invalid request', 401, array('content-type' => 'text/html'));
                 }
 
-                $google_access_token = $result["access_token"];
-                $id_token = $result["id_token"];
+                $google_access_token = $result['access_token'];
+                $id_token = $result['id_token'];
 
                 $ch = curl_init('https://www.googleapis.com/userinfo/v2/me');
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Host: www.googleapis.com', 'Authorization: Bearer '.$google_access_token, 'Content-length: 0'));
