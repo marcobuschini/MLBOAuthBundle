@@ -46,7 +46,7 @@ class GoogleController extends Controller
             if($request->query->get('state') == $request->getSession()->get('state'))
             {
                 $auth = $this->container->getParameter('mlbo_auth');
-                $provider_key = $auth['firewall_name'];
+                $provider_key = $this->container->getParameter('fos_user.firewall_name'); //$auth['firewall_name'];
                 $google = $auth['google'];
                 $code = $request->query->get('code');
                 $client_id = $google['client_id'];
