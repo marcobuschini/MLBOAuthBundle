@@ -1,15 +1,13 @@
-{% extends "MLBOAuthBundle::layout.html.twig" %}
-
-{% block title "Facebook - Redirect" %}
-
-{% block head %}
-{% endblock %}
-
-{% block content_header %}
-{% endblock  %}
-
-{% block content %}
-<script type="text/javascript">
-    location.href = location.href.replace(/connect#/g, "redirect?");
-</script>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Facebook - Redirect</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            location.href = location.href.replace(/connect#/g, "redirect?");
+        </script>
+    </body>
+</html>
