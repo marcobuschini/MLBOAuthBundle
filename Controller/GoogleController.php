@@ -30,7 +30,7 @@ class GoogleController extends Controller
         $google = $this->readConfig();
 
         // Creates an hash, and saves in the session. It will be used in
-        // multiple authetication stems.
+        // multiple authetication steps.
         $state = hash('sha512', rand(), false);
         $session = $this->getRequest()->getSession();
         $session->set('state', $state);
@@ -61,19 +61,9 @@ class GoogleController extends Controller
                 $otoken = $this->getOAuthToken($code, $client_id, $client_secret, $redirect_uri);
                 $google_user = $this->getGoogleUser($otoken);
 
-                $this->findUpdateUser($google_user, $otoken);
+                $user = $this->findUpdateUser($google_user, $otoken);
 
-                $this->fireLogin();
-
-                // Here, $provider_key is the name of the firewall in your security.yml
-                $provider_key = $this->container->getParameter('fos_user.firewall_name'); //$auth['firewall_name'];
-                $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
-                $this->get("security.context")->setToken($token);
-
-                // Fire the login event
-                // Logging the user in as above doesn't do this automatically
-                $event = new InteractiveLoginEvent($request, $token);
-                $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
+                $this->fireLogin($user, $request);
             } else {
                 return new Response('Invalid request', 401, array('content-type' => 'text/html'));
             }
@@ -148,5 +138,19 @@ class GoogleController extends Controller
         $user->setGoogleId($google_user['id']);
         $user->setGoogleAccessToken($otoken['access_token']);
         $userManager->updateUser($user, true);
+
+        return $user;
+    }
+
+    private function fireLogin($user, $request) {
+        // Here, $provider_key is the name of the firewall in your security.yml
+        $provider_key = $this->container->getParameter('fos_user.firewall_name'); //$auth['firewall_name'];
+        $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
+        $this->get("security.context")->setToken($token);
+
+        // Fire the login event
+        // Logging the user in as above doesn't do this automatically
+        $event = new InteractiveLoginEvent($request, $token);
+        $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
     }
 }
