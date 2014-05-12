@@ -29,6 +29,14 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('scope')->end()
                     ->end()
                 ->end()
+                ->arrayNode('facebook')
+                    ->children()
+                        ->scalarNode('client_id')->end()
+                        ->scalarNode('client_secret')->end()
+                        ->scalarNode('redirect_uri')->end()
+                        ->scalarNode('scope')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;
