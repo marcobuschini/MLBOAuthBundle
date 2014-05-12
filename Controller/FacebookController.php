@@ -16,19 +16,25 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
   */
 class FacebookController extends Controller
 {
-	
+    /**
+     * Holds private configuratio data.
+     */
+    private $config = null;
+
     /**
      * Logs a user in using Facebook's OAuth
      */
     public function loginAction()
     {
-        $auth = $this->container->getParameter('mlbo_auth');
+        $facebook = $this->readConfig();
 
-        $facebook = $auth['facebook'];
+        // Creates an hash, and saves in the session. It will be used in
+        // multiple authetication steps.
         $state = hash('sha512', rand(), false);
         $session = $this->getRequest()->getSession();
         $session->set('state', $state);
 
+        // Redirect to the Google Login page.
         $uri = 'https://www.facebook.com/dialog/oauth?'.
                'client_id='.$facebook['client_id'].
                '&response_type=code%20token'.
@@ -55,94 +61,113 @@ class FacebookController extends Controller
      */
     public function connectAction(Request $request)
     {
-        $access_toekn = $request->query->get('access_token');
-        $code = $request->query->get('code');
-        $state = $request->query->get('state');
-        
-        if($state == $request->getSession()->get('state'))
+        if($request->query->has('state') && $request->query->has('code'))
         {
-            $auth = $this->container->getParameter('mlbo_auth');
-            $provider_key = $this->container->getParameter('fos_user.firewall_name');
-            $facebook = $auth['facebook'];
-            $client_id = $facebook['client_id'];
-            $client_secret = $facebook['client_secret'];
-            $redirect_uri = $facebook['redirect_uri'];
-                
-            $url = 'https://graph.facebook.com/oauth/access_token?'.
-                    'client_id='.$client_id.
-                    '&redirect_uri='.urlencode($redirect_uri).
-                    '&client_secret='.$client_secret.
-                    '&code='.$code;
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            
-            $array = array();
-            $response = explode('&', $result);
-            foreach($response as $r1)
+            if($request->query->get('state') == $request->getSession()->get('state'))
             {
-                $r1 = explode('=', $r1);
-                   $array[$r1[0]] = $r1[1]; 
+                $code = $request->query->get('code');
+                $provider_key = $this->container->getParameter('fos_user.firewall_name');
+                $facebook = $this->readConfig();
+                $client_id = $facebook['client_id'];
+                $client_secret = $facebook['client_secret'];
+                $redirect_uri = $facebook['redirect_uri'];
+
+                $otoken = $this->getOAuthToken($code, $client_id, $client_secret, $redirect_uri);
+                $facebook_user = $this->getFaceBookUser($otoken);
+
+                $user = $this->findUpdateUser($facebook_user, $otoken);
+
+                $this->fireLogin($user, $request);
+            } else {
+                return new Response('Invalid request', 401, array('content-type' => 'text/html'));
             }
-
-            if(array_key_exists('error', $array))
-            {
-                return new Response('Invalid request: '.$array['error'], 401, array('content-type' => 'text/html'));
-            }
-
-            $facebook_access_token = $array['access_token'];
-            
-            $ch = curl_init('https://graph.facebook.com/oauth/access_token?'.
-                            'client_id='.$client_id.
-                            '&access_token='.$facebook_access_token.
-                            '&client_secret='.$client_secret.
-                            '&grant_type=client_credentials');
-            
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            
-            $object = explode('&', $result);
-            $vec = explode('=', $object[0]);
-            if($vec[0] == 'access_token')
-            {
-                $access_token = $vec[1];
-            }
-            
-            $ch = curl_init('https://graph.facebook.com/me?fields=id,name,email&access_token='.$facebook_access_token);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            
-            $object = json_decode($result, true);
-
-            $userManager = $this->container->get('fos_user.user_manager');
-            $user = $userManager->findUserBy(array('facebook_id' => $object['id']));
-            if($user == null)
-            {
-                $user = $userManager->createUser();
-                $user->setPassword('');
-            }
-
-            $user->setUserName($object['name']);
-            $user->setEmail($object['email']);
-            $user->setFacebookId($object['id']);
-            $user->setFacebookAccessToken($facebook_access_token);
-            $userManager->updateUser($user, true);
-
-            // Here, $provider_key is the name of the firewall in your security.yml
-            $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
-            $this->get("security.context")->setToken($token);
-
-            // Fire the login event
-            // Logging the user in as above doesn't do this automatically
-            $event = new InteractiveLoginEvent($request, $token);
-            $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
         } else {
             return new Response('Invalid request', 401, array('content-type' => 'text/html'));
         }
 
         return $this->redirect($this->generateUrl('facebook_after_login'));
+    }
+
+    /**
+     * Load parameters from the config.yml file, and caches it for further use.
+     */
+    private function readConfig()
+    {
+        if($this->config == null)
+            $config = $this->container->getParameter('mlbo_auth');
+        return $config['facebook'];
+    }
+
+    /**
+     * Gets a token from Facebook OAuth.
+     */
+    private function getOAuthToken($code, $client_id, $client_secret, $redirect_uri)
+    {
+        $url = 'https://graph.facebook.com/oauth/access_token?'.
+                'client_id='.$client_id.
+                '&redirect_uri='.urlencode($redirect_uri).
+                '&client_secret='.$client_secret.
+                '&code='.$code;
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $array = array();
+        $response = explode('&', $result);
+        foreach($response as $r1)
+        {
+            $r1 = explode('=', $r1);
+            $array[$r1[0]] = $r1[1];
+        }
+
+        if(array_key_exists('error', $array))
+        {
+            return new Response('Invalid request: '.$array['error'], 401, array('content-type' => 'text/html'));
+        }
+
+        return $array['access_token'];
+    }
+
+    private function getFacebookUser($token)
+    {
+        $ch = curl_init('https://graph.facebook.com/me?fields=id,name,email&access_token='.$token);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($result, true);
+    }
+
+    private function findUpdateUser($facebook_user, $otoken)
+    {
+        $userManager = $this->container->get('fos_user.user_manager');
+        $user = $userManager->findUserBy(array('email' => $facebook_user['email']));
+        if($user == null)
+        {
+            $user = $userManager->createUser();
+            $user->setPassword('');
+        }
+
+        $user->setUserName($facebook_user['name']);
+        $user->setEmail($facebook_user['email']);
+        $user->setFacebookId($facebook_user['id']);
+        $user->setFacebookAccessToken($otoken['access_token']);
+        $userManager->updateUser($user, true);
+
+        return $user;
+    }
+
+    private function fireLogin($user, $request)
+    {
+        // Here, $provider_key is the name of the firewall in your security.yml
+        $provider_key = $this->container->getParameter('fos_user.firewall_name'); //$auth['firewall_name'];
+        $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
+        $this->get("security.context")->setToken($token);
+
+        // Fire the login event
+        // Logging the user in as above doesn't do this automatically
+        $event = new InteractiveLoginEvent($request, $token);
+        $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
     }
 }
