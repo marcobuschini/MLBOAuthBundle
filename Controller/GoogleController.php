@@ -126,7 +126,7 @@ class GoogleController extends Controller
     private function findUpdateUser($google_user, $otoken)
     {
         $userManager = $this->container->get('fos_user.user_manager');
-        $user = $userManager->findUserBy(array('email' => $google_user['email']));
+        $user = $userManager->findUserBy(array('google_id' => $google_user['id']));
         if($user == null)
         {
             $user = $userManager->createUser();

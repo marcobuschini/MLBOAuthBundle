@@ -142,7 +142,7 @@ class FacebookController extends Controller
     private function findUpdateUser($facebook_user, $otoken)
     {
         $userManager = $this->container->get('fos_user.user_manager');
-        $user = $userManager->findUserBy(array('email' => $facebook_user['email']));
+        $user = $userManager->findUserBy(array('facebook_id' => $facebook_user['id']));
         if($user == null)
         {
             $user = $userManager->createUser();
