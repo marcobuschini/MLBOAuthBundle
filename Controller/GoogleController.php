@@ -144,7 +144,7 @@ class GoogleController extends Controller
 
     private function fireLogin($user, $request) {
         // Here, $provider_key is the name of the firewall in your security.yml
-        $provider_key = $this->container->getParameter('fos_user.firewall_name'); //$auth['firewall_name'];
+        $provider_key = $this->container->getParameter('fos_user.firewall_name');
         $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
         $this->get("security.context")->setToken($token);
 

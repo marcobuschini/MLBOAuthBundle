@@ -34,7 +34,7 @@ class FacebookController extends Controller
         $session = $this->getRequest()->getSession();
         $session->set('state', $state);
 
-        // Redirect to the Google Login page.
+        // Redirect to the Facebook Login page.
         $uri = 'https://www.facebook.com/dialog/oauth?'.
                'client_id='.$facebook['client_id'].
                '&response_type=code%20token'.
@@ -161,7 +161,7 @@ class FacebookController extends Controller
     private function fireLogin($user, $request)
     {
         // Here, $provider_key is the name of the firewall in your security.yml
-        $provider_key = $this->container->getParameter('fos_user.firewall_name'); //$auth['firewall_name'];
+        $provider_key = $this->container->getParameter('fos_user.firewall_name');
         $token = new PreAuthenticatedToken($user, $user->getPassword(), $provider_key, $user->getRoles());
         $this->get("security.context")->setToken($token);
 
