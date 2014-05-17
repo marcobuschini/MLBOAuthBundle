@@ -149,8 +149,8 @@ class FacebookController extends Controller
             $user->setPassword('');
         }
 
-        $user->setUserName($facebook_user['name']);
-        $user->setEmail($facebook_user['email']);
+        $user->setFacebookUserName($facebook_user['name']);
+        $user->setFacebookEmail($facebook_user['email']);
         $user->setFacebookId($facebook_user['id']);
         $user->setFacebookAccessToken($otoken['access_token']);
         $userManager->updateUser($user, true);

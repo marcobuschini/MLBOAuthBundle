@@ -133,8 +133,8 @@ class GoogleController extends Controller
             $user->setPassword('');
         }
 
-        $user->setUserName($google_user['name']);
-        $user->setEmail($google_user['email']);
+        $user->setGoogleUserName($google_user['name']);
+        $user->setGoogleEmail($google_user['email']);
         $user->setGoogleId($google_user['id']);
         $user->setGoogleAccessToken($otoken['access_token']);
         $userManager->updateUser($user, true);
