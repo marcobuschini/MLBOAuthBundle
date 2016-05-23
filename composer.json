@@ -10,7 +10,7 @@
         "fosub oauth"
     ],
     "license" : [
-        "LGPL"
+        "LGPL-3.0"
     ],
     "repositories" : {
         "type" : "vcs",
