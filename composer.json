@@ -1,5 +1,5 @@
 {
-    "name" : "mlb/o-auth-bundle",
+    "name" : "marcobuschini/o-auth-bundle",
     "description" : "Integrating FOSUserBundle with OAuth",
     "type" : "symfony-bundle",
     "authors" : [{
@@ -26,5 +26,5 @@
             "MLB\\OAuthBundle" : ""
         }
     },
-    "target-dir" : "MLB/OAuhtBundle"
+    "target-dir" : "Mlb/OAuhtBundle"
 }
