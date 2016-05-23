@@ -66,7 +66,8 @@ class FacebookController extends Controller
             if($request->query->get('state') == $request->getSession()->get('state'))
             {
                 $code = $request->query->get('code');
-                $provider_key = $this->container->getParameter('fos_user.firewall_name');
+                // TODO: find out if the parameter can be removed altogether
+                // $provider_key = $this->container->getParameter('fos_user.firewall_name');
                 $facebook = $this->readConfig();
                 $client_id = $facebook['client_id'];
                 $client_secret = $facebook['client_secret'];
