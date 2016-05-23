@@ -3,11 +3,8 @@
 namespace MLB\OAuthBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
@@ -66,7 +63,6 @@ class FacebookController extends Controller
             if($request->query->get('state') == $request->getSession()->get('state'))
             {
                 $code = $request->query->get('code');
-                $provider_key = $this->container->getParameter('fos_user.firewall_name');
                 $facebook = $this->readConfig();
                 $client_id = $facebook['client_id'];
                 $client_secret = $facebook['client_secret'];
@@ -93,7 +89,7 @@ class FacebookController extends Controller
      */
     private function readConfig()
     {
-        if($this->config == null)
+        if($this->config === null)
             $config = $this->container->getParameter('mlbo_auth');
         return $config['facebook'];
     }
@@ -143,7 +139,7 @@ class FacebookController extends Controller
     {
         $userManager = $this->container->get('fos_user.user_manager');
         $user = $userManager->findUserBy(array('facebook_id' => $facebook_user['id']));
-        if($user == null)
+        if($user === null)
         {
             $user = $userManager->createUser();
             $user->setPassword('');

@@ -3,11 +3,8 @@
 namespace MLB\OAuthBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -78,7 +75,7 @@ class GoogleController extends Controller
      */
     private function readConfig()
     {
-        if($this->config == null)
+        if($this->config === null)
             $config = $this->container->getParameter('mlbo_auth');
         return $config['google'];
     }
@@ -127,7 +124,7 @@ class GoogleController extends Controller
     {
         $userManager = $this->container->get('fos_user.user_manager');
         $user = $userManager->findUserBy(array('google_id' => $google_user['id']));
-        if($user == null)
+        if($user === null)
         {
             $user = $userManager->createUser();
             $user->setPassword('');

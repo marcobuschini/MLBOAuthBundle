@@ -1,5 +1,5 @@
 {
-    "name" : "MLB/OAuthBundle",
+    "name" : "mlb/o-auth-bundle",
     "description" : "Integrating FOSUserBundle with OAuth",
     "type" : "symfony-bundle",
     "authors" : [{
@@ -10,7 +10,7 @@
         "fosub oauth"
     ],
     "license" : [
-        "LGPL"
+        "LGPL-3.0"
     ],
     "repositories" : {
         "type" : "vcs",
@@ -27,7 +27,7 @@
     "target-dir" : "MLB/OAuhtBundle",
     "extra" : {
         "branch-alias" : {
-            "dev-master" : "master"
+            "dev-master" : "master-dev"
         }
     }
 }
