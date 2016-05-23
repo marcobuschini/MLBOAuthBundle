@@ -19,15 +19,12 @@
     "require" : {
         "friendsofsymfony/user-bundle": "~1.3"
     },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload" : {
         "psr-0" : {
             "MLB\\OAuthBundle" : ""
         }
     },
-    "target-dir" : "MLB/OAuhtBundle",
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "master-dev"
-        }
-    }
+    "target-dir" : "MLB/OAuhtBundle"
 }
