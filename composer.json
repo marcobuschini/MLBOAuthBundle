@@ -19,8 +19,8 @@
     "prefer-stable": true,
     "autoload" : {
         "psr-0" : {
-            "MLB\\OAuthBundle" : ""
+            "Mlb\\OAuthBundle" : ""
         }
     },
-    "target-dir" : "Mlb/OAuhtBundle"
+    "target-dir" : "Mlb/OAuthBundle"
 }
