@@ -93,7 +93,7 @@ class FacebookController extends Controller
      */
     private function readConfig()
     {
-        if($this->config == null)
+        if($this->config === null)
             $config = $this->container->getParameter('mlbo_auth');
         return $config['facebook'];
     }
@@ -143,7 +143,7 @@ class FacebookController extends Controller
     {
         $userManager = $this->container->get('fos_user.user_manager');
         $user = $userManager->findUserBy(array('facebook_id' => $facebook_user['id']));
-        if($user == null)
+        if($user === null)
         {
             $user = $userManager->createUser();
             $user->setPassword('');
