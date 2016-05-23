@@ -1,5 +1,5 @@
 {
-    "name" : "MLB/OAuthBundle",
+    "name" : "mlb/o-auth-bundle",
     "description" : "Integrating FOSUserBundle with OAuth",
     "type" : "symfony-bundle",
     "authors" : [{
